@@ -36,20 +36,9 @@ body::before{
 .header{display:flex;flex-direction:column;align-items:center;margin-bottom:3.5rem}
 
 .logo-ring{
-  width:72px;height:72px;border-radius:50%;
-  border:0.5px solid rgba(139,0,0,0.5);
   display:flex;align-items:center;justify-content:center;
   margin-bottom:1.5rem;
-  position:relative;
   opacity:0;animation:fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s forwards
-}
-.logo-ring::before{
-  content:'';position:absolute;inset:-1px;border-radius:50%;
-  background:radial-gradient(circle,rgba(139,0,0,0.15) 0%,transparent 70%)
-}
-.logo-ring .monogram{
-  font-family:'Cinzel',serif;font-size:1.3rem;font-weight:900;
-  letter-spacing:0.1em;color:var(--red-hi);position:relative;z-index:1
 }
 
 .brand-name{
@@ -181,7 +170,7 @@ body::before{
 
   <div class="header">
     <div class="logo-ring">
-      <img src="assets/logo.png" alt="LVO" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(139,0,0,0.5))"/>
+      <img src="assets/logo.png" alt="LVO" style="width:clamp(80px,14vw,110px);height:auto;filter:drop-shadow(0 0 18px rgba(139,0,0,0.45))"/>
     </div>
     <h1 class="brand-name">LVO</h1>
     <p class="brand-tagline">Connect &middot; Follow &middot; Engage</p>
