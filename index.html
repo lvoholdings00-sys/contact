@@ -11,25 +11,35 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --red:#8B0000;--red-hi:#CC2020;--red-glow:#8B000040;
+  --red:#8B0000;--red-hi:#CC2020;
   --chrome:#C8C8D0;--white:#F0EEEC;--dim:#666662;
-  --bg:#060404;--surface:#0E0808;--surface2:#160D0D;
+  --bg:#060404;
 }
 html,body{min-height:100%;background:var(--bg);color:var(--white);font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden}
 
-body::before{
-  content:'';position:fixed;inset:0;
+/* ── PLASMA CANVAS ── */
+#plasma-canvas{
+  position:fixed;inset:0;width:100%;height:100%;
+  z-index:0;
+  /* Keep it dark — low opacity so it feels like an aura, not a party */
+  opacity:0.22;
+  mix-blend-mode:screen;
+}
+
+/* Dark vignette over the plasma so content stays legible */
+.vignette{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
   background:
-    radial-gradient(ellipse 55% 45% at 50% 0%,rgba(139,0,0,0.18) 0%,transparent 70%),
-    radial-gradient(ellipse 40% 30% at 50% 100%,rgba(100,0,0,0.12) 0%,transparent 65%);
-  pointer-events:none;z-index:0
+    radial-gradient(ellipse 70% 60% at 50% 50%, transparent 20%, rgba(6,4,4,0.78) 80%),
+    radial-gradient(ellipse 100% 40% at 50% 0%,  rgba(6,4,4,0.6) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 40% at 50% 100%,rgba(6,4,4,0.7) 0%, transparent 60%);
 }
 
 .page{
-  position:relative;z-index:1;
+  position:relative;z-index:2;
   min-height:100vh;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:5rem 1.5rem 4rem
+  padding:5rem 1.5rem 4rem;
 }
 
 /* ── HEADER ── */
@@ -38,20 +48,20 @@ body::before{
 .logo-ring{
   display:flex;align-items:center;justify-content:center;
   margin-bottom:1.5rem;
-  opacity:0;animation:fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s forwards
+  opacity:0;animation:fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s forwards;
 }
 
 .brand-name{
   font-family:'Cinzel',serif;font-size:clamp(1.8rem,6vw,2.6rem);
   font-weight:900;letter-spacing:0.35em;color:var(--white);
-  opacity:0;animation:fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.4s forwards
+  opacity:0;animation:fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.4s forwards;
 }
 .brand-tagline{
   margin-top:0.6rem;
   font-family:'Cormorant Garamond',serif;font-size:clamp(0.75rem,2vw,0.9rem);
   font-style:italic;font-weight:300;letter-spacing:0.2em;
   color:var(--dim);
-  opacity:0;animation:fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.55s forwards
+  opacity:0;animation:fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.55s forwards;
 }
 
 /* ── DIVIDER ── */
@@ -59,10 +69,10 @@ body::before{
   width:100%;max-width:380px;
   display:flex;align-items:center;gap:1rem;
   margin-bottom:2.5rem;
-  opacity:0;animation:fadeIn 0.8s ease 0.75s forwards
+  opacity:0;animation:fadeIn 0.8s ease 0.75s forwards;
 }
-.divider-line{flex:1;height:0.5px;background:linear-gradient(to right,transparent,rgba(139,0,0,0.45))}
-.divider-line.right{background:linear-gradient(to left,transparent,rgba(139,0,0,0.45))}
+.divider-line{flex:1;height:0.5px;background:linear-gradient(to right,transparent,rgba(139,0,0,0.55))}
+.divider-line.right{background:linear-gradient(to left,transparent,rgba(139,0,0,0.55))}
 .divider-dot{width:4px;height:4px;border-radius:50%;background:var(--red-hi);opacity:0.7}
 
 /* ── LINKS ── */
@@ -72,13 +82,17 @@ body::before{
   display:flex;align-items:center;
   text-decoration:none;
   padding:0.95rem 1.4rem;
-  border:0.5px solid rgba(139,0,0,0.18);
-  background:rgba(14,8,8,0.6);
+  border:0.5px solid rgba(139,0,0,0.2);
+  background:rgba(6,4,4,0.55);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
   position:relative;overflow:hidden;
-  opacity:0;transform:translateY(16px);
-  transition:border-color 0.35s,background 0.35s;
-  animation:fadeUp 0.65s cubic-bezier(0.16,1,0.3,1) forwards
+  opacity:0;
+  /* bouncy entrance — cubic-bezier with overshoot */
+  animation:bouncyUp 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  transition:border-color 0.35s,background 0.35s,transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.35s;
 }
+/* staggered delays */
 .social-link:nth-child(1){animation-delay:0.9s}
 .social-link:nth-child(2){animation-delay:1.0s}
 .social-link:nth-child(3){animation-delay:1.1s}
@@ -86,28 +100,39 @@ body::before{
 .social-link:nth-child(5){animation-delay:1.3s}
 .social-link:nth-child(6){animation-delay:1.4s}
 
+/* Left-sweep glow on hover */
 .social-link::after{
   content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,rgba(139,0,0,0.08) 0%,transparent 60%);
+  background:linear-gradient(90deg,rgba(139,0,0,0.12) 0%,transparent 65%);
   transform:scaleX(0);transform-origin:left;
-  transition:transform 0.4s cubic-bezier(0.16,1,0.3,1)
+  transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);
 }
-.social-link:hover{border-color:rgba(204,32,32,0.5);background:rgba(20,6,6,0.8)}
+.social-link:hover{
+  border-color:rgba(204,32,32,0.5);
+  background:rgba(12,4,4,0.75);
+  /* bouncy lift on hover */
+  transform:translateY(-3px) scale(1.012);
+  box-shadow:0 8px 32px rgba(139,0,0,0.18), 0 2px 8px rgba(0,0,0,0.5);
+}
 .social-link:hover::after{transform:scaleX(1)}
+.social-link:active{
+  transform:translateY(0px) scale(0.99);
+  transition-duration:0.1s;
+}
 
 /* Platform icon badge */
 .platform-badge{
   width:34px;height:34px;border-radius:4px;
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;margin-right:1.1rem;position:relative;z-index:1;
-  transition:transform 0.3s;
-  border:0.5px solid rgba(255,255,255,0.06)
+  transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  border:0.5px solid rgba(255,255,255,0.06);
 }
-.social-link:hover .platform-badge{transform:scale(1.08)}
+.social-link:hover .platform-badge{transform:scale(1.15) rotate(-3deg)}
 .platform-badge svg{width:16px;height:16px;fill:currentColor}
 
 .badge-ig{background:#1a0d0d;color:#d9a0a0}
-.badge-x{background:#0d0d14;color:#a0a8d9}
+.badge-x {background:#0d0d14;color:#a0a8d9}
 .badge-tt{background:#0d1a14;color:#a0d9b8}
 .badge-li{background:#0d1220;color:#80a8d9}
 .badge-fb{background:#0d1220;color:#80a8d9}
@@ -118,13 +143,13 @@ body::before{
   font-family:'Cinzel',serif;font-size:0.62rem;
   letter-spacing:0.28em;color:var(--chrome);
   text-transform:uppercase;display:block;
-  transition:color 0.3s
+  transition:color 0.3s;
 }
 .social-link:hover .link-platform{color:var(--white)}
 .link-handle{
   font-size:0.78rem;font-style:italic;
   color:var(--dim);display:block;margin-top:0.1rem;
-  transition:color 0.3s
+  transition:color 0.3s;
 }
 .social-link:hover .link-handle{color:rgba(200,200,208,0.8)}
 
@@ -132,7 +157,7 @@ body::before{
   position:relative;z-index:1;
   font-size:0.85rem;color:var(--red-hi);
   opacity:0;transform:translateX(-6px);
-  transition:opacity 0.3s,transform 0.3s
+  transition:opacity 0.3s,transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
 .social-link:hover .link-arrow{opacity:1;transform:translateX(0)}
 
@@ -140,23 +165,35 @@ body::before{
 .footer{
   display:flex;flex-direction:column;align-items:center;
   gap:1.2rem;margin-top:3rem;
-  opacity:0;animation:fadeIn 0.8s ease 1.7s forwards
+  opacity:0;animation:fadeIn 0.8s ease 1.7s forwards;
 }
 .back-link{
   font-family:'Cinzel',serif;font-size:0.5rem;
   letter-spacing:0.35em;color:var(--dim);
   text-decoration:none;text-transform:uppercase;
-  transition:color 0.3s
+  transition:color 0.3s;
 }
 .back-link:hover{color:var(--chrome)}
 .copy{
   font-family:'Cinzel',serif;font-size:0.42rem;
-  letter-spacing:0.16em;color:rgba(102,102,98,0.4)
+  letter-spacing:0.16em;color:rgba(102,102,98,0.4);
 }
 
 /* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+@keyframes fadeIn{
+  from{opacity:0}to{opacity:1}
+}
+/* Bouncy entrance — goes slightly past then settles */
+@keyframes bouncyUp{
+  0%  {opacity:0;transform:translateY(28px) scale(0.96)}
+  60% {opacity:1;transform:translateY(-5px) scale(1.015)}
+  80% {transform:translateY(2px) scale(0.998)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
 
 @media(max-width:480px){
   .page{padding:3.5rem 1rem 3rem}
@@ -166,6 +203,11 @@ body::before{
 </style>
 </head>
 <body>
+
+<!-- WebGL Plasma Canvas -->
+<canvas id="plasma-canvas"></canvas>
+<div class="vignette"></div>
+
 <div class="page">
 
   <div class="header">
@@ -184,10 +226,9 @@ body::before{
 
   <div class="links">
 
-    <!-- Instagram -->
     <a class="social-link" href="https://instagram.com/lvo.hub" target="_blank" rel="noopener">
       <div class="platform-badge badge-ig">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
       </div>
       <div class="link-info">
         <span class="link-platform">Instagram</span>
@@ -196,10 +237,9 @@ body::before{
       <span class="link-arrow">→</span>
     </a>
 
-    <!-- X / Twitter -->
     <a class="social-link" href="https://x.com/wearelvo" target="_blank" rel="noopener">
       <div class="platform-badge badge-x">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       </div>
       <div class="link-info">
         <span class="link-platform">X / Twitter</span>
@@ -208,10 +248,9 @@ body::before{
       <span class="link-arrow">→</span>
     </a>
 
-    <!-- TikTok -->
     <a class="social-link" href="https://tiktok.com/@wearelvo" target="_blank" rel="noopener">
       <div class="platform-badge badge-tt">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.01a8.16 8.16 0 004.77 1.52V7.1a4.85 4.85 0 01-1-.41z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.01a8.16 8.16 0 004.77 1.52V7.1a4.85 4.85 0 01-1-.41z"/></svg>
       </div>
       <div class="link-info">
         <span class="link-platform">TikTok</span>
@@ -220,10 +259,9 @@ body::before{
       <span class="link-arrow">→</span>
     </a>
 
-    <!-- LinkedIn -->
     <a class="social-link" href="https://www.linkedin.com/company/lvo-holdings/" target="_blank" rel="noopener">
       <div class="platform-badge badge-li">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
       </div>
       <div class="link-info">
         <span class="link-platform">LinkedIn</span>
@@ -232,10 +270,9 @@ body::before{
       <span class="link-arrow">→</span>
     </a>
 
-    <!-- Facebook -->
     <a class="social-link" href="https://www.facebook.com/people/LVO/61565537704456/" target="_blank" rel="noopener">
       <div class="platform-badge badge-fb">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
       </div>
       <div class="link-info">
         <span class="link-platform">Facebook</span>
@@ -244,10 +281,9 @@ body::before{
       <span class="link-arrow">→</span>
     </a>
 
-    <!-- YouTube -->
     <a class="social-link" href="https://youtube.com/@wearelvo" target="_blank" rel="noopener">
       <div class="platform-badge badge-yt">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
       </div>
       <div class="link-info">
         <span class="link-platform">YouTube</span>
@@ -264,5 +300,139 @@ body::before{
   </div>
 
 </div>
+
+<script>
+/* ─────────────────────────────────────────────
+   Plasma WebGL — ported from the React/OGL source.
+   Runs on a raw <canvas> with no external deps.
+───────────────────────────────────────────── */
+(function(){
+  const canvas = document.getElementById('plasma-canvas');
+  let gl;
+  try {
+    gl = canvas.getContext('webgl2', { alpha:true, antialias:false, premultipliedAlpha:false });
+  } catch(e){}
+  if (!gl) return; // silently skip on unsupported browsers
+
+  const vert = `#version 300 es
+precision highp float;
+in vec2 position;
+out vec2 vUv;
+void main(){
+  vUv = position * 0.5 + 0.5;
+  gl_Position = vec4(position, 0.0, 1.0);
+}`;
+
+  const frag = `#version 300 es
+precision highp float;
+uniform vec2  iResolution;
+uniform float iTime;
+uniform float uSpeed;
+uniform float uOpacity;
+out vec4 fragColor;
+
+void mainImage(out vec4 o, vec2 C){
+  vec2 center = iResolution.xy * 0.5;
+  float i, d, z, T = iTime * uSpeed;
+  vec3 O;
+
+  for(vec2 r = iResolution.xy, Q; ++i < 60.; O += o.w/d*o.xyz){
+    vec3 p = z * normalize(vec3(C - .5*r, r.y));
+    p.z -= 4.;
+    vec3 S = p;
+    d = p.y - T;
+    p.x += .4*(1.+p.y)*sin(d + p.x*0.1)*cos(.34*d + p.x*0.05);
+    Q = p.xz *= mat2(cos(p.y + vec4(0,11,33,0) - T));
+    z += d = abs(sqrt(length(Q*Q)) - .25*(5.+S.y))/3. + 8e-4;
+    o = 1. + sin(S.y + p.z*.5 + S.z - length(S-p) + vec4(2,1,0,8));
+  }
+  o.xyz = tanh(O / 1e4);
+}
+
+bool finite1(float x){ return !(isnan(x)||isinf(x)); }
+vec3 sanitize(vec3 c){
+  return vec3(
+    finite1(c.r)?c.r:0.0,
+    finite1(c.g)?c.g:0.0,
+    finite1(c.b)?c.b:0.0
+  );
+}
+
+void main(){
+  vec4 o = vec4(0.0);
+  mainImage(o, gl_FragCoord.xy);
+  vec3 rgb = sanitize(o.rgb);
+  /* Bias toward deep reds — crush greens/blues for the dark-mysterious look */
+  rgb = vec3(rgb.r * 1.1, rgb.g * 0.35, rgb.b * 0.25);
+  float alpha = length(rgb) * uOpacity;
+  fragColor = vec4(rgb, alpha);
+}`;
+
+  function compile(type, src){
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER,   vert));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, frag));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  /* Full-screen triangle */
+  const verts = new Float32Array([-1,-1, 3,-1, -1,3]);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
+  const posLoc = gl.getAttribLocation(prog, 'position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const uRes   = gl.getUniformLocation(prog, 'iResolution');
+  const uTime  = gl.getUniformLocation(prog, 'iTime');
+  const uSpeed = gl.getUniformLocation(prog, 'uSpeed');
+  const uOp    = gl.getUniformLocation(prog, 'uOpacity');
+
+  /* Config — tweak these */
+  const SPEED   = 0.38;   // plasma flow speed
+  const OPACITY = 1.0;    // shader internal opacity (canvas CSS opacity handles overall)
+
+  gl.uniform1f(uSpeed, SPEED);
+  gl.uniform1f(uOp,    OPACITY);
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  function resize(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = Math.floor(window.innerWidth  * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const t0 = performance.now();
+  let raf = 0;
+
+  function loop(t){
+    gl.uniform1f(uTime, (t - t0) * 0.001);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    raf = requestAnimationFrame(loop);
+  }
+
+  /* Pause when tab is hidden to save battery */
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden){ cancelAnimationFrame(raf); }
+    else { raf = requestAnimationFrame(loop); }
+  });
+
+  raf = requestAnimationFrame(loop);
+})();
+</script>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"57d5cd2fcb53490c8c986ef27590d71d","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
