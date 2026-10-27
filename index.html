@@ -2,12 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1"/>
 <title>LVO · Connect</title>
+<meta name="description" content="Follow LVO Holdings on Instagram, X, TikTok, LinkedIn, Facebook and YouTube.">
 <link rel="icon" type="image/png" href="assets/logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -222,7 +220,17 @@ html,body{min-height:100%;background:var(--bg);color:var(--white);font-family:'C
   .platform-badge{width:30px;height:30px;margin-right:0.85rem}
 }
 </style>
-</head>
+<meta name="lvo-fonts" content="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&amp;display=swap"><style id="lvo-contact-polish">
+.back-link{font-size:.72rem!important;color:rgba(255,255,255,.75)!important;display:inline-flex;align-items:center;min-height:44px;padding:0 10px}
+.back-link:hover,.back-link:focus-visible{color:#fff!important}
+.copy{font-size:.62rem!important;color:rgba(255,255,255,.5)!important}
+.legal{display:flex;align-items:center;justify-content:center;gap:.4rem;font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase}
+.legal a{color:rgba(255,255,255,.75);text-decoration:none;padding:12px 6px;border-bottom:.5px solid rgba(204,32,32,.4)}
+.legal a:hover,.legal a:focus-visible{color:#fff}
+.legal span{color:rgba(255,255,255,.4)}
+@media(pointer:coarse){.back-link{cursor:auto!important}}
+:focus-visible{outline:2px solid #9ec5ff;outline-offset:3px}
+</style></head>
 <body>
 
 <!-- Swirl trail cursor canvas -->
@@ -320,6 +328,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--white);font-family:'C
 
   <div class="footer">
     <a class="back-link" href="https://wearelvo.com">← wearelvo.com</a>
+    <p class="legal"><a href="https://privacy.wearelvo.com">Privacy</a><span aria-hidden="true"> &middot; </span><a href="https://tos.wearelvo.com">Terms</a></p>
     <p class="copy">&copy; 2026 LVO Holdings &middot; All Rights Reserved</p>
   </div>
 
@@ -529,5 +538,5 @@ html,body{min-height:100%;background:var(--bg);color:var(--white);font-family:'C
 </script>
 
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"57d5cd2fcb53490c8c986ef27590d71d","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-</body>
+<script src="assets/lvo-consent.js" defer></script></body>
 </html>
