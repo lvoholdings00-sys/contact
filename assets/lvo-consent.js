@@ -24,10 +24,13 @@
   function css() {
     if (D.getElementById('lvo-consent-css')) return;
     var s = D.createElement('style'); s.id = 'lvo-consent-css';
-    s.textContent = '#lvo-consent{position:fixed;z-index:2147483000;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:560px;margin:0 auto;background:rgba(8,8,10,.97);border:.5px solid rgba(255,255,255,.22);color:#d9d9de;font:400 15px/1.5 "Cormorant Garamond",Georgia,serif;padding:16px 18px;box-shadow:0 18px 50px rgba(0,0,0,.7)}' +
+    s.textContent = '#lvo-consent{position:fixed;z-index:2147483000;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:560px;margin:0 auto;background:#08080a;border:1px solid rgba(255,255,255,.28);color:#d9d9de;font:400 15px/1.5 "Cormorant Garamond",Georgia,serif;padding:18px 18px 16px;box-shadow:0 18px 50px rgba(0,0,0,.7);text-align:left;-webkit-text-size-adjust:100%}' +
+      '#lvo-consent,#lvo-consent *{box-sizing:border-box}' +
+      '#lvo-consent a{display:inline!important;padding:0!important;margin:0!important;min-height:0!important;border:0!important;font:inherit!important;line-height:inherit!important;color:#fff!important;text-decoration:underline;text-underline-offset:3px}' +
       '#lvo-consent b{display:block;font:600 11px "Cinzel",serif;letter-spacing:.28em;text-transform:uppercase;color:#fff;margin-bottom:6px}' +
-      '#lvo-consent p{margin:0 0 12px}#lvo-consent .r{display:flex;gap:10px;flex-wrap:wrap}' +
-      '#lvo-consent button{flex:1 1 140px;min-height:44px;font:600 10px "Cinzel",serif;letter-spacing:.24em;text-transform:uppercase;background:transparent;color:#fff;border:.5px solid rgba(255,255,255,.4);cursor:pointer}' +
+      '#lvo-consent p{margin:0 0 14px!important;padding:0!important;font:inherit!important;line-height:1.5!important;color:#d9d9de!important}#lvo-consent .r{display:flex;gap:10px}' +
+      '@media(max-width:480px){#lvo-consent{left:10px;right:10px;padding:16px 16px 14px;font-size:14px}#lvo-consent .r{flex-direction:column}}' +
+      '#lvo-consent button{flex:1 1 0;margin:0;padding:0 8px;min-height:46px;font:600 10px "Cinzel",serif;letter-spacing:.24em;text-transform:uppercase;background:transparent;color:#fff;border:.5px solid rgba(255,255,255,.4);cursor:pointer}' +
       '#lvo-consent button.p{background:#e8e8ee;color:#000;border-color:#e8e8ee}#lvo-consent button:focus-visible{outline:1px solid #fff;outline-offset:3px}';
     D.head.appendChild(s);
   }
@@ -35,7 +38,7 @@
     if (box || (!force && (read() || gpc))) return;
     css();
     box = D.createElement('div'); box.id = 'lvo-consent'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Cookie preferences');
-    box.innerHTML = '<b>Cookies</b><p>Essential cookies keep you signed in and secure. With your consent we also load web fonts, switch on live data feeds and remember your preferences. Nothing is sold or shared for advertising. <a href="https://privacy.wearelvo.com" style="color:#fff">Privacy</a> · <a href="https://tos.wearelvo.com" style="color:#fff">Terms</a></p><div class="r"><button type="button" class="p" data-a="y">Accept</button><button type="button" data-a="n">Essential only</button></div>';
+    box.innerHTML = '<b>Cookies</b><p>Essential cookies keep you signed in and secure. With your consent we also load web fonts, switch on live data feeds and remember your preferences. Nothing is sold or shared for advertising. <a href="https://privacy.wearelvo.com">Privacy</a> · <a href="https://tos.wearelvo.com">Terms</a></p><div class="r"><button type="button" class="p" data-a="y">Accept</button><button type="button" data-a="n">Essential only</button></div>';
     box.addEventListener('click', function (e) { var a = e.target && e.target.getAttribute && e.target.getAttribute('data-a'); if (a === 'y') C.accept(); else if (a === 'n') C.reject(); });
     D.body.appendChild(box);
   }
