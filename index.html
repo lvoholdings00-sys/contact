@@ -76,6 +76,14 @@ html,body{min-height:100%;background:#000;color:var(--white);font-family:'Times 
 #site-menu .menu-legal{display:flex;gap:1.4rem}
 #site-menu .menu-legal a{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;padding:8px 0}
 #site-menu .menu-legal a:hover{color:#fff}
+
+#site-menu{--c-vindex:#C8A96E;--c-alliance:#A359EC;--c-operations:#1D9E75;--g-careers:linear-gradient(120deg,#8f98a6 0%,#f4f6f9 35%,#aab2bf 55%,#eef0f4 75%,#8a93a1 100%);--c-hover-red:#ff6b6b}
+#site-menu li a:is(:hover,:active,:focus-visible){color:var(--c-hover-red)}
+#site-menu li:first-child{border-bottom-color:rgba(204,32,32,.35)}
+#site-menu li a[href$="/vindex/"]:is(:hover,:active,:focus-visible){color:var(--c-vindex)}
+#site-menu li a[href$="/alliance/"]:is(:hover,:active,:focus-visible){color:var(--c-alliance)}
+#site-menu li a[href$="/operations/"]:is(:hover,:active,:focus-visible){color:var(--c-operations)}
+#site-menu li a[href$="/careers/"]:is(:hover,:active,:focus-visible){color:transparent;background:var(--g-careers);-webkit-background-clip:text;background-clip:text;text-shadow:none}
 </style>
 <meta name="lvo-fonts" content="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&amp;display=swap">
 </head>
@@ -239,7 +247,7 @@ html,body{min-height:100%;background:#000;color:var(--white);font-family:'Times 
 </div>
 <nav id="site-menu" aria-label="Main menu">
   <ul>
-    <li><a href="https://wearelvo.com/" aria-label="LVO-O home">&#120139;&#120149;&#120142;-&#120142;</a></li>
+    <li><a href="https://wearelvo.com/" aria-label="LVO-O home">𝐋𝐕𝐎-𝐎</a></li>
     <li><a href="https://wearelvo.com/vindex/">Vindex</a></li>
     <li><a href="https://wearelvo.com/alliance/">Alliance</a></li>
     <li><a href="https://wearelvo.com/operations/">Operations</a></li>
