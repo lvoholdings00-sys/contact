@@ -55,6 +55,27 @@ html,body{min-height:100%;background:#000;color:var(--white);font-family:'Times 
 .foot a:hover,.foot a:focus-visible{color:#fff;border-bottom-color:rgba(255,107,107,.9)}
 :focus-visible{outline:2px solid #9ec5ff;outline-offset:3px}
 @media(max-width:768px){#title a span:first-child{display:none}#title a::before{content:'LVO';font-family:'Cinzel',serif;font-size:13px;letter-spacing:.3em}.foot{flex-direction:column;gap:.4rem}.page{padding-bottom:7rem}}
+
+#top-right{position:fixed;z-index:60;display:flex;align-items:center;gap:2px;top:calc(env(safe-area-inset-top,0px) + clamp(6px,1.6vw,18px));right:clamp(6px,2.4vw,28px)}
+#menu-btn{position:relative;display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:none;border:0;cursor:pointer;color:#fff;-webkit-tap-highlight-color:transparent;transition:color .3s}
+#menu-btn .rune{position:absolute;width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:square;stroke-linejoin:miter;filter:drop-shadow(0 0 5px rgba(0,0,0,.85));transition:opacity .35s ease,transform .5s cubic-bezier(.77,0,.175,1)}
+#menu-btn .rune-dot{fill:currentColor;stroke:none}
+#menu-btn .rune-open{opacity:0;transform:rotate(-90deg) scale(.6)}
+#menu-btn.open .rune-closed{opacity:0;transform:rotate(90deg) scale(.6)}
+#menu-btn.open .rune-open{opacity:1;transform:none}
+#menu-btn:hover,#menu-btn:focus-visible{color:#ff6b6b}
+#menu-btn:hover .rune{filter:drop-shadow(0 0 6px rgba(204,32,32,.8))}
+#menu-btn:focus-visible{outline:1px solid #7F77DD;outline-offset:-4px}
+#site-menu{--purple:#7F77DD;position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:safe center;gap:1.6rem;padding:calc(env(safe-area-inset-top,0px) + 64px) 24px calc(env(safe-area-inset-bottom,0px) + 24px);background:rgba(0,0,0,.95);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);overflow-y:auto;opacity:0;visibility:hidden;transition:opacity .4s ease,visibility 0s linear .4s}
+#site-menu.open{opacity:1;visibility:visible;transition:opacity .4s ease,visibility 0s}
+#site-menu ul{list-style:none;display:flex;flex-direction:column;align-items:center;gap:.2rem}
+#site-menu li a{display:block;padding:12px 28px;color:#fff;text-decoration:none;text-align:center;font-family:'Cinzel','Cambria Math','Segoe UI Symbol',Georgia,serif;font-weight:600;font-size:clamp(20px,5.5vw,30px);letter-spacing:.16em;text-transform:uppercase;line-height:1.2;transition:color .25s}
+#site-menu li a:hover,#site-menu li a:active,#site-menu li a:focus-visible{color:var(--purple);outline:none}
+#site-menu li:first-child{margin-bottom:.9rem;padding-bottom:.9rem;border-bottom:.5px solid rgba(127,119,221,.35)}
+#site-menu li:first-child a{font-size:clamp(24px,6.5vw,36px);letter-spacing:.12em}
+#site-menu .menu-legal{display:flex;gap:1.4rem}
+#site-menu .menu-legal a{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;padding:8px 0}
+#site-menu .menu-legal a:hover{color:#fff}
 </style>
 <meta name="lvo-fonts" content="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&amp;display=swap">
 </head>
@@ -212,5 +233,30 @@ html,body{min-height:100%;background:#000;color:var(--white);font-family:'Times 
 })();
 </script>
 <script src="assets/lvo-consent.js" defer></script>
+
+<div id="top-right">
+  <button id="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu"><svg class="rune rune-closed" viewBox="0 0 28 28" aria-hidden="true"><path d="M14 2.5V25.5M14 11.5L5 3.5M14 11.5L23 3.5M9 19.5L14 15.5L19 19.5"/><path class="rune-dot" d="M14 27.2l1.1-1.1L14 25l-1.1 1.1z"/></svg><svg class="rune rune-open" viewBox="0 0 28 28" aria-hidden="true"><path d="M5.5 5.5L22.5 22.5M22.5 5.5L5.5 22.5M14 2.5L25.5 14L14 25.5L2.5 14Z"/></svg></button>
+</div>
+<nav id="site-menu" aria-label="Main menu">
+  <ul>
+    <li><a href="https://wearelvo.com/" aria-label="LVO-O home">&#120139;&#120149;&#120142;-&#120142;</a></li>
+    <li><a href="https://wearelvo.com/vindex/">Vindex</a></li>
+    <li><a href="https://wearelvo.com/alliance/">Alliance</a></li>
+    <li><a href="https://wearelvo.com/operations/">Operations</a></li>
+    <li><a href="https://wearelvo.com/careers/">Careers</a></li>
+    <li><a href="https://about.wearelvo.com/">About</a></li>
+    <li><a href="https://contact.wearelvo.com/">Connect</a></li>
+  </ul>
+  <div class="menu-legal"><a href="https://privacy.wearelvo.com">Privacy</a><a href="https://tos.wearelvo.com">Terms</a></div>
+</nav>
+<script>
+(function(){
+  var btn=document.getElementById('menu-btn'),menu=document.getElementById('site-menu'),open=false;
+  function setMenu(o){open=o;btn.classList.toggle('open',o);menu.classList.toggle('open',o);btn.setAttribute('aria-expanded',String(o));btn.setAttribute('aria-label',o?'Close menu':'Open menu');if(o)menu.querySelector('a').focus({preventScroll:true})}
+  btn.addEventListener('click',function(){setMenu(!open)});
+  menu.addEventListener('click',function(e){if(e.target.closest('a'))setMenu(false)});
+  window.addEventListener('keydown',function(e){if(e.key==='Escape'&&open){setMenu(false);btn.focus()}});
+})();
+</script>
 </body>
 </html>
