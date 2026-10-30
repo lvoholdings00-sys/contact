@@ -170,14 +170,27 @@ html,body{min-height:100%;background:#000;color:var(--white);font-family:'Times 
 (function(){
   var belt=document.getElementById('belt'),canvas=document.getElementById('fx'),ctx=canvas.getContext('2d');
   var cards=[].slice.call(document.querySelectorAll('#cards .card')),codes=[].slice.call(document.querySelectorAll('#codes .code-item'));
-  var N=cards.length,reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var N=cards.length,allCards=cards.slice(),allCodes=codes.slice(),M=N,reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var PAL=['#CC2020','#e04848','#ff6b6b','#d9b38c','#f1e3d3','#ffffff','#ffffff'];
   var cw=300,ch=380,gap=40,Lx=0,top=60,off=0,vel=0,drag=false,lastX=0,lastT=0,moved=0,hover=0,hoverT=0,focusIdx=-1,sparks=[];
   function hash(a,b,c){var h=(Math.imul(a,374761393)+Math.imul(b,668265263)+Math.imul(c,2147483647))|0;h=Math.imul(h^(h>>>13),1274126177)|0;return((h^(h>>>16))>>>0)/4294967296;}
   function mod(n,m){return((n%m)+m)%m;}
+  /* repeat the set of cards until the belt is wider than the screen, so wide displays never show an empty stretch */
+  function sync(R){
+    var want=N*R;
+    while(allCards.length<want){
+      var j=allCards.length%N,c=cards[j].cloneNode(true),k=codes[j].cloneNode(true);
+      c.setAttribute('aria-hidden','true');c.tabIndex=-1;
+      cards[0].parentNode.appendChild(c);codes[0].parentNode.appendChild(k);
+      allCards.push(c);allCodes.push(k);
+    }
+    while(allCards.length>want){allCards.pop().remove();allCodes.pop().remove();}
+    M=want;
+  }
   function measure(){
     var r=cards[0].getBoundingClientRect();cw=r.width||300;ch=r.height||380;
     var W=belt.clientWidth;Lx=W/2;gap=W<768?W*.07:Math.max(28,W*.03);
+    sync(Math.max(1,Math.ceil((W+cw+gap)/((cw+gap)*N))));
     var d=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.round(W*d);canvas.height=Math.round(belt.clientHeight*d);
     ctx.setTransform(d,0,0,d,0,0);
   }
@@ -195,7 +208,7 @@ html,body{min-height:100%;background:#000;color:var(--white);font-family:'Times 
   var last=performance.now();
   function tick(now){
     var dt=Math.min(.1,Math.max(.001,(now-last)/1000));last=now;var t=now/1000;
-    var span=cw+gap,period=span*N;
+    var span=cw+gap,period=span*M;
     hover+=(hoverT-hover)*(1-Math.exp(-4*dt));
     if(focusIdx>=0&&!drag){ /* glide the focused card to just right of the scanner so it stays whole */
       var x=mod(off+focusIdx*span+span,period)-span,want=Lx+gap*.5,diff=want-x;
@@ -205,9 +218,9 @@ html,body{min-height:100%;background:#000;color:var(--white);font-family:'Times 
       vel+=(target-vel)*(1-Math.exp(-2.2*dt));off+=vel*dt;
     }
     ctx.clearRect(0,0,belt.clientWidth,belt.clientHeight);
-    for(var i=0;i<N;i++){
+    for(var i=0;i<M;i++){
       var x=mod(off+i*span+span,period)-span,cut=Math.min(cw,Math.max(0,Lx-x));
-      var c=cards[i],k=codes[i];
+      var c=allCards[i],k=allCodes[i];
       c.style.transform='translate3d('+x+'px,0,0)';
       if(cut>0){var m='linear-gradient(90deg,transparent '+cut+'px,#000 '+(cut+26)+'px)';c.style.clipPath='inset(0 0 0 '+cut+'px round 0 6px 6px 0)';c.style.webkitMaskImage=m;c.style.maskImage=m;c.style.pointerEvents=cut>=cw?'none':'';}
       else{c.style.clipPath='none';c.style.webkitMaskImage='none';c.style.maskImage='none';c.style.pointerEvents='';}
