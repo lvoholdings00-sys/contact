@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="assets/favicon-32.png">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--white:#fff;--dim:rgba(255,255,255,.55);--red-hi:#CC2020;--cw:clamp(240px,76vw,330px);--ch:clamp(300px,92vw,400px)}
+:root{--white:#fff;--dim:rgba(255,255,255,.55);--red-hi:#CC2020;--ch:min(clamp(300px,92vw,400px),max(280px,42vh));--cw:min(clamp(240px,76vw,330px),calc(var(--ch)*.825))}
 html,body{min-height:100%;background:#000;color:var(--white);font-family:'Times New Roman',Georgia,serif;overflow-x:hidden}
 #video-bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;background:#000}
 .shade{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.4) 0%,rgba(0,0,0,.05) 30%,rgba(0,0,0,.05) 65%,rgba(0,0,0,.5) 100%)}
